@@ -3,63 +3,7 @@ import streamlit as st
 
 # REFACTORED: Functions moved to logic_utils.py for better organization
 # Originally all game logic was in this file, now imported from logic_utils
-
-def get_range_for_difficulty(difficulty: str):
-    if difficulty == "Easy":
-        return 1, 20
-    if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
-        return 1, 50
-    return 1, 100
-
-
-def parse_guess(raw: str):
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
-        return False, None, "Enter a guess."
-
-    try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
-
-    return True, value, None
-
-
-def check_guess(guess, secret):
-    # FIXED: Inverted hints bug - originally said "Too High" when guess < secret
-    # Now correctly says "Too Low" when guess < secret
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    if guess < secret:
-        return "Too Low", "📉 Go LOWER!"  # FIXED: Was "Too High", "Go HIGHER!"
-    else:
-        return "Too High", "📈 Go HIGHER!"  # FIXED: Was "Too Low", "Go LOWER!"
-
-
-def update_score(current_score: int, outcome: str, attempt_number: int):
-    if outcome == "Win":
-        points = 100 - 10 * (attempt_number + 1)
-        if points < 10:
-            points = 10
-        return current_score + points
-
-    if outcome == "Too High":
-        if attempt_number % 2 == 0:
-            return current_score + 5
-        return current_score - 5
-
-    if outcome == "Too Low":
-        return current_score - 5
-
-    return current_score
+from logic_utils import get_range_for_difficulty, parse_guess, check_guess, update_score, get_attempt_limit
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
@@ -74,12 +18,7 @@ difficulty = st.sidebar.selectbox(
     index=1,
 )
 
-attempt_limit_map = {
-    "Easy": 6,
-    "Normal": 8,
-    "Hard": 5,
-}
-attempt_limit = attempt_limit_map[difficulty]
+attempt_limit = get_attempt_limit(difficulty)
 
 low, high = get_range_for_difficulty(difficulty)
 
