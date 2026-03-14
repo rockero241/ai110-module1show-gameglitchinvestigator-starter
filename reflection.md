@@ -69,3 +69,4 @@ I enojoyed using AI to understand the codebase before I did anything else or ask
 I would tell the AI from the begining to always give reasoning and wait for me to ask it to change things before it tries going and changning my files
 
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+It showed me that AI can be very helpful for understanding existing codebases and refractoring, but it's very important to know what you're doing. Otherwise you can end up with AI modifying most of the files, which would make it very diffult to go back and trace bugs. I plan to keep learning how to use it effectively and responsibly.
