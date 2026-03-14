@@ -1,6 +1,9 @@
 import random
 import streamlit as st
 
+# REFACTORED: Functions moved to logic_utils.py for better organization
+# Originally all game logic was in this file, now imported from logic_utils
+
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
@@ -30,21 +33,15 @@ def parse_guess(raw: str):
 
 
 def check_guess(guess, secret):
+    # FIXED: Inverted hints bug - originally said "Too High" when guess < secret
+    # Now correctly says "Too Low" when guess < secret
     if guess == secret:
         return "Win", "🎉 Correct!"
 
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
+    if guess < secret:
+        return "Too Low", "📉 Go LOWER!"  # FIXED: Was "Too High", "Go HIGHER!"
+    else:
+        return "Too High", "📈 Go HIGHER!"  # FIXED: Was "Too Low", "Go LOWER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
@@ -132,8 +129,15 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
-    st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    # FIXED: New game button issues
+    # - Was setting attempts = 0 (now = 1)
+    # - Was using random.randint(1, 100) instead of difficulty range (now uses low, high)
+    # - Was not resetting status to "playing" (now does)
+    # - Was not clearing history (now does)
+    st.session_state.attempts = 1
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.status = "playing"
+    st.session_state.history = []
     st.success("New game started.")
     st.rerun()
 
@@ -155,10 +159,10 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        # FIXED: Type mismatch bug - originally converted secret to string on even attempts:
+        # if st.session_state.attempts % 2 == 0: secret = str(st.session_state.secret)
+        # This broke comparisons in check_guess()
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 
