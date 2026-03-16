@@ -52,9 +52,10 @@ Due to a type conversion bug that would sometimes change the secret number to a 
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
 
+Imagine playing a game where every time you make a move the whole board resets and redraws itself. That's streamlit reruns, where the entire script runs from scratch whenever you type of click something. Session state is like having a notebook that remembers your game progress between the resets, so you don't lose everything on each rerun.
 
 - What change did you make that finally gave the game a stable secret number?
-
+Removed the condition that was converting the secret number to a string on even numbered attempts, which was causing inconsistent comparisons in the guess checking logic. It should always be an int.
 ---
 
 ## 5. Looking ahead: your developer habits
@@ -63,7 +64,7 @@ Due to a type conversion bug that would sometimes change the secret number to a 
 I enojoyed using AI to understand the codebase before I did anything else or asked it to change anything
 
   - This could be a testing habit, a prompting strategy, or a way you used Git.
-  I like using AI to understand not to delegate my thinking
+  I like using AI to understand not to delegate my thinking. And it can be a great tool for getting up to speed, understanding a codebase or realizing why something works the way it does.
 
 - What is one thing you would do differently next time you work with AI on a coding task?
 I would tell the AI from the begining to always give reasoning and wait for me to ask it to change things before it tries going and changning my files
